@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiLearning;
+using WebApiLearning.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServe
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ICarRepository, CarRepository>();
 
 var app = builder.Build();
 

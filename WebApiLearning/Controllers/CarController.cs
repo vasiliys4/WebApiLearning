@@ -12,88 +12,62 @@ namespace WebApiLearning.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        readonly ApplicationContext _context;
-        public CarController(ApplicationContext context)
+        readonly ICarRepository CarRepository;
+        public CarController(ICarRepository carRepository)
         {
-            _context = context;
+            CarRepository = carRepository;
         }
 
         // GET: api/<CarController>
         [HttpGet]
         public async Task<IActionResult> Geting()
-        {
-            var cars = await _context.cars.ToListAsync();
-            return Ok(cars);
+        {       
+            return Ok(CarRepository.GetAll());
         }
 
         // GET api/<CarController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var cars = await _context.cars.FindAsync(id);
-
-            if (cars == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(cars);
+            return Ok(CarRepository.Find(id));
         }
 
         // POST api/<CarController>
         [HttpPost]
         public async Task<IActionResult> Post(Car car)
         {
-            await _context.cars.AddAsync(car);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = car.CarId , name = car.CarName}, car);
-        }
-
-        // PUT api/<CarController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Car car)
-        {   
-            if (id != car.CarId)
+            if (car == null)
             {
                 return BadRequest();
             }
-            var CarModel = await _context.cars.FindAsync(id);
-            if (CarModel == null)
-            {
-                return NotFound();
-            }
+            CarRepository.Add(car);
+            return CreatedAtAction(nameof(Get), new { id = car.CarId , name = car.CarName}, car);
+        }
 
-            CarModel.CarName = car.CarName;
-
-            try
+        //// PUT api/<CarController>/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] Car car)
+        {
+            if (id != car.CarId || car == null)
             {
-                await _context.SaveChangesAsync();
+                return BadRequest();
             }
-            catch (DbUpdateConcurrencyException) when (!CarItemExists(id))
-            {
-                return NotFound();
-            }
+            CarRepository.Update(id ,car);
 
             return NoContent();
         }
 
-        // DELETE api/<CarController>/5
+        //// DELETE api/<CarController>/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var todoItem = await _context.cars.FindAsync(id);
-
-            if (todoItem == null)
+            var todo = CarRepository.Find(id);
+            if (todo == null)
             {
                 return NotFound();
             }
-
-            _context.cars.Remove(todoItem);
-            await _context.SaveChangesAsync();
-
+            CarRepository.Remove(id);
             return NoContent();
         }
-        private bool CarItemExists(long id) =>
-         _context.cars.Any(e => e.CarId == id);
     }
 }
