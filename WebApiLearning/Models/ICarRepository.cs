@@ -4,10 +4,10 @@ namespace WebApiLearning.Models
 {
     public interface ICarRepository
     {
-        void Add(Car car);
-        IEnumerable<Car> GetAll();
-        Car Find(int key);
-        Car Remove(int id);
-        void Update(int id, Car car);
+        Task AddAsync(Car car);
+        Task<IEnumerable<Car>> GetAllAsync();
+        Task<Car> FindAsync(int id);
+        Task<Car> RemoveAsync(int id);
+        Task UpdateAsync(int id, Car car);
     }
 }

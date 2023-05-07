@@ -11,58 +11,40 @@ namespace WebApiLearning.Models
         {
             _context = context;
         }
-        public void Add(Car car)
+        public async Task AddAsync(Car car)
         {
+            
             _context.cars.Add(car);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public Car Find(int key)
+        public async Task<Car> FindAsync(int id)
         {
-            var cars = _context.cars.Find(key);
+            var car = await _context.cars.Include(u => u.Motor).FirstOrDefaultAsync(u => u.CarId == id);
+            return car;
+        }
 
-            //if (cars == null)
-            //{
-            //    return NotFound();
-            //}
-
+        public async Task<IEnumerable<Car>> GetAllAsync()
+        {
+            var cars = await _context.cars.Include(u => u.Motor).ToListAsync();
             return cars;
         }
 
-        public IEnumerable<Car> GetAll()
+        public async Task<Car> RemoveAsync(int id)
         {
-            var cars = _context.cars.ToList();
-            return cars;
-        }
-
-        public Car Remove(int id)
-        {
-            var todoItem = _context.cars.Find(id);
-
+            var todoItem = await _context.cars.FindAsync(id);
             _context.cars.Remove(todoItem);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return todoItem;
         }
 
-        public void Update(int id, Car car)
+        public async Task UpdateAsync(int id, Car car)
         {
-
-            var CarModel = _context.cars.Find(id);
-
-
+            var CarModel = await _context.cars.FindAsync(id);
             CarModel.CarName = car.CarName;
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException) when (!CarItemExists(id))
-            {
-
-            }
+            CarModel.MaxSpeed = car.MaxSpeed;
+            CarModel.Motor = car.Motor;
+            await _context.SaveChangesAsync();
         }
-
-        private bool CarItemExists(long id) =>
-        _context.cars.Any(e => e.CarId == id);
     }
 }

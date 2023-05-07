@@ -20,16 +20,16 @@ namespace WebApiLearning.Controllers
 
         // GET: api/<CarController>
         [HttpGet]
-        public async Task<IActionResult> Geting()
+        public async Task<IActionResult> GetAll()
         {       
-            return Ok(CarRepository.GetAll());
+            return Ok(await CarRepository.GetAllAsync());
         }
 
         // GET api/<CarController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(CarRepository.Find(id));
+            return Ok(await CarRepository.FindAsync(id));
         }
 
         // POST api/<CarController>
@@ -40,7 +40,7 @@ namespace WebApiLearning.Controllers
             {
                 return BadRequest();
             }
-            CarRepository.Add(car);
+            await CarRepository.AddAsync(car);
             return CreatedAtAction(nameof(Get), new { id = car.CarId , name = car.CarName}, car);
         }
 
@@ -52,7 +52,7 @@ namespace WebApiLearning.Controllers
             {
                 return BadRequest();
             }
-            CarRepository.Update(id ,car);
+            await CarRepository.UpdateAsync(id, car);
 
             return NoContent();
         }
@@ -61,12 +61,12 @@ namespace WebApiLearning.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var todo = CarRepository.Find(id);
+            var todo = await CarRepository.FindAsync(id);
             if (todo == null)
             {
                 return NotFound();
             }
-            CarRepository.Remove(id);
+            await CarRepository.RemoveAsync(id);
             return NoContent();
         }
     }
