@@ -41,14 +41,14 @@ namespace WebApiLearning.Controllers
                 return BadRequest();
             }
             await CarRepository.AddAsync(car);
-            return CreatedAtAction(nameof(Get), new { id = car.CarId , name = car.CarName}, car);
+            return CreatedAtAction(nameof(Get), new { id = car.Id , name = car.CarName , maxSpeed = car.MaxSpeed , motor = car.Motor}, car);
         }
 
         //// PUT api/<CarController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Car car)
         {
-            if (id != car.CarId || car == null)
+            if (id != car.Id || car == null)
             {
                 return BadRequest();
             }

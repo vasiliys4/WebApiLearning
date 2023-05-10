@@ -27,7 +27,7 @@ if (app.Environment.IsDevelopment())
 
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
-    //db.Database.EnsureDeleted();
+    db.Database.EnsureDeleted();
     db.Database.EnsureCreated();
 }
 

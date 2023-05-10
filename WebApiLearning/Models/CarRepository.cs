@@ -11,16 +11,16 @@ namespace WebApiLearning.Models
         {
             _context = context;
         }
+
         public async Task AddAsync(Car car)
-        {
-            
+        {            
             _context.cars.Add(car);
             await _context.SaveChangesAsync();
         }
 
         public async Task<Car> FindAsync(int id)
         {
-            var car = await _context.cars.Include(u => u.Motor).FirstOrDefaultAsync(u => u.CarId == id);
+            var car = await _context.cars.Include(u => u.Motor).FirstOrDefaultAsync(u => u.Id == id);
             return car;
         }
 
